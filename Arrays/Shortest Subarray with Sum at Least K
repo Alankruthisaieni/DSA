@@ -1,0 +1,47 @@
+862. Shortest Subarray with Sum at Least K
+Given an integer array nums and an integer k, return the length of the shortest non-empty subarray of nums with a sum of at least k. If there is no such subarray, return -1.
+A subarray is a contiguous part of an array.
+Similar to previous one but contains negative numbers as well
+Link: https://leetcode.com/problems/shortest-subarray-with-sum-at-least-k/
+
+Example 1:
+
+Input: nums = [1], k = 1
+Output: 1
+Example 2:
+
+Input: nums = [1,2], k = 4
+Output: -1
+Example 3:
+
+Input: nums = [2,-1,2], k = 3
+Output: 3
+
+Code:
+class Solution {
+    public int shortestSubarray(int[] nums, int k) {
+        //calculate cumulative sum(prefix sum)
+        int n=nums.length;
+        long[] cum=new long[n+1]; //long as 1 <= nums.length <= 10^5
+        for(int i=1;i<=n;i++){
+            cum[i]=cum[i-1]+nums[i-1];
+        }
+        Deque<Integer> d=new LinkedList<>();//deque as we can insert & delete from both sides
+        //and we can store values in increasing order
+        int minSize=n+1;
+        for(int i=0;i<=n;i++){
+            while(!d.isEmpty() && cum[d.peekLast()]>=cum[i]){
+                //if deques last element is greater than upcoming one then remove
+                //to maintain increasing order
+                d.removeLast();
+            }
+            while(!d.isEmpty() && cum[i]-cum[d.peekFirst()]>=k){
+            //if difference b/w cumulative sums is >=k then compress from first until sum<k
+                minSize=Math.min(minSize,i-d.removeFirst());
+            }
+            d.addLast(i);
+        }
+        return minSize<n+1?minSize:-1;
+    }
+}
+T.C: O(N)
