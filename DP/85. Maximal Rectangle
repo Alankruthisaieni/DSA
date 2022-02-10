@@ -1,0 +1,77 @@
+Given a rows x cols binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.
+Input: matrix = [["1","0","1","0","0"],["1","0","1","1","1"],["1","1","1","1","1"],["1","0","0","1","0"]]
+Output: 6
+Explanation: The maximal rectangle is shown in the above picture.
+Example 2:
+
+Input: matrix = [["0"]]
+Output: 0
+Example 3:
+
+Input: matrix = [["1"]]
+Output: 1
+
+Code:
+class Solution {
+    public int largestRectangleArea(int[] heights) {
+        int n=heights.length;
+        int[] left=new int[n];
+        int[] right=new int[n];
+        Stack<Integer> st=new Stack<Integer>();
+        for(int i=0;i<n;i++){
+            if(st.empty()){
+                left[i]=0;
+            }
+            else{
+                while(!(st.empty()) && heights[st.peek()]>=heights[i]){
+                    st.pop();
+                }
+                left[i]=st.empty()?0:st.peek()+1;
+            }
+            st.push(i);
+        }
+        while(!(st.empty())){
+            st.pop();
+        }
+        for(int i=n-1;i>=0;i--){
+            if(st.empty()){
+                right[i]=n-1;
+            }
+            else{
+                while(!(st.empty()) && heights[st.peek()]>=heights[i]){
+                    st.pop();
+                }
+                right[i]=st.empty()?n-1:st.peek()-1;
+            }
+            st.push(i);
+        }
+        int maxArea=0;
+        for(int i=0;i<n;i++){
+            int area=((Math.abs(left[i]-right[i])+1)*(heights[i]));
+            if(area>maxArea){
+                maxArea=area;
+            }
+        }
+        return maxArea;
+    }
+    public int maximalRectangle(char[][] matrix) {
+        int[][] mat=new int[matrix.length][matrix[0].length];
+        for(int i=0;i<matrix.length;i++){
+            for(int j=0;j<matrix[0].length;j++){
+                mat[i][j]=Integer.parseInt(String.valueOf(matrix[i][j]));
+            }
+        }
+        int res=largestRectangleArea(mat[0]);
+        // System.out.println(res);
+        for(int i=1;i<matrix.length;i++){
+            for(int j=0;j<matrix[0].length;j++){
+                if(mat[i][j]==1){
+                    mat[i][j]+=mat[i-1][j];
+                }
+            }
+            res=Math.max(res,largestRectangleArea(mat[i]));
+        }
+        return res;
+    }
+}
+T.C:O(R*C)
