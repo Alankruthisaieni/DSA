@@ -1,0 +1,80 @@
+127. Word Ladder
+Hard
+
+A transformation sequence from word beginWord to word endWord using a dictionary wordList is a sequence of words beginWord -> s1 -> s2 -> ... -> sk such that:
+
+Every adjacent pair of words differs by a single letter.
+Every si for 1 <= i <= k is in wordList. Note that beginWord does not need to be in wordList.
+sk == endWord
+Given two words, beginWord and endWord, and a dictionary wordList, return the number of words in the shortest transformation sequence from beginWord to endWord, or 0 if no such sequence exists.
+
+ 
+
+Example 1:
+
+Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log","cog"]
+Output: 5
+Explanation: One shortest transformation sequence is "hit" -> "hot" -> "dot" -> "dog" -> cog", which is 5 words long.
+Example 2:
+
+Input: beginWord = "hit", endWord = "cog", wordList = ["hot","dot","dog","lot","log"]
+Output: 0
+Explanation: The endWord "cog" is not in wordList, therefore there is no valid transformation sequence.
+
+Code:
+class Solution {
+    public int ladderLength(String beginWord, String endWord, List<String> wordList) {
+        int n=wordList.size();
+        Set<String> s=new HashSet<String>();
+        int isPresent=0;
+        for(int i=0;i<n;i++){
+            String c=wordList.get(i);
+            s.add(c);
+            //checking if endword is present in list or not
+            if(c.equals(endWord)){
+                isPresent=1;
+            }
+        }
+        if(isPresent==0){
+            return 0;
+        }
+        int depth=0;
+        //Use bfs for graphs as it is polynomial complexity
+        Queue<String> q=new ArrayDeque<>();
+        q.add(beginWord);
+        while(!q.isEmpty()){
+            depth+=1;
+            int l=q.size();
+            while(l>0){
+                l-=1;
+                String curr=q.peek();
+                q.remove(curr);
+                // System.out.println(curr);
+                for(int i=0;i<curr.length();i++){
+                    String temp=curr;
+                    for(char j='a';j<='z';j++){
+                        String t=temp.substring(0,i)+j+temp.substring(i+1);
+                         // System.out.println(t);
+                        if(t.equals(curr)){
+                            continue;
+                        }
+                        else if(t.equals(endWord)){
+                            return depth+1;
+                        }
+                        else{
+                            if(s.contains(t)){
+                                q.add(t);
+                                s.remove(t);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+}
+//T.C: O(26*N *N * W)
+// W:no.of words
+// N: length of word
+//N: comparison
