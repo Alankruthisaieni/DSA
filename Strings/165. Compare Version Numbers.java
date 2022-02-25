@@ -33,7 +33,7 @@ Code:
 class Solution {
     public int compareVersion(String version1, String version2) {
         int ans=0;
-        String[] l1=version1.split("\\.");
+        String[] l1=version1.split("\\."); //For treating it as a special character to be recognized in regular expression
         String[] l2=version2.split("\\.");
         int l=Math.max(l1.length,l2.length);
         int r1=0,r2=0,j=0;
